@@ -1,10 +1,10 @@
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
-import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
+import {uploadOnCloudinary} from '../utils/cloudinary.js'
 
 const registerUser=asyncHandler(async (req,res)=>{
     //get userdetail from frontend
@@ -17,9 +17,10 @@ const registerUser=asyncHandler(async (req,res)=>{
     //check for user creation
     //return response
 
+
     const {username,fullname,email,password}=req.body;
-    console.log("email",email);
-    console.log("fullname",fullname)
+    // console.log("email",email);
+    // console.log("fullname",fullname)
 
     if(
         [fullname,email,username,password].some((field)=> field?.trim() === "")
@@ -42,12 +43,18 @@ const registerUser=asyncHandler(async (req,res)=>{
         throw new ApiError(400,"Avatar file is required")
     }
 
-    const avatar=await uploadOnCloudinary(avtarLocalPath);
+    const avatar = await uploadOnCloudinary(avtarLocalPath);
+
+            console.log(avatar)
+
     const coverImage=await uploadOnCloudinary(coverImageLocalPath);
+
+
 
     if(!avatar){
         throw new ApiError(400,"Avatar file is required");
     }
+
 
 
    const user= await User.create({
@@ -55,7 +62,7 @@ const registerUser=asyncHandler(async (req,res)=>{
         email,
         fullname,
         password,
-        avatar:avatar.url,
+        avatar:avatar.url || "",
         coverImage:coverImage?.url || "",
     })
 
